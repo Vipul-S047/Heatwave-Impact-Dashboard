@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #aad3df; 
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        #map {
+            width: 90%;
+            height: 600px;
+            margin: 20px auto;
+            border-radius: 15px;
+            border: 3px dashed #f2efe9; 
+        }
+
+        .dropdown-box {
+            width: 300px;
+            background-color: white;
+            margin: 20px auto;
+            padding: 15px;
+            border-radius: 15px; 
+            border: 1px solid #ddd;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        select {
+            margin: 10px;
+            padding: 8px 12px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        select:hover {
+            border-color: #007bff;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <h1><u>Global Temperature Visualization</u></h1><br>
+    
+    <div class="dropdown-box">
+        <p id="dropdown-label">Click Below to Change Year</p>
+        <select id="year-selector">
+        </select>
+    </div>
+
+    <div id="map"></div>
+
+    <script>
+        var map = L.map('map').setView([20, 0], 3);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        function convertToFloat(coord) {
+            let value = parseFloat(coord);
+            if (coord.includes('S') || coord.includes('W')) {
+                value = -value;
+            }
+            return value;
+        }
+
+        function fetchData(year) {
+            fetch(`/get_data/${year}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(location => {
+                        var temp = parseFloat(location.temp);
+                        var color = getColor(temp);
+                        var lat = convertToFloat(location.lat);
+                        var lon = convertToFloat(location.lon);
+
+                        L.circleMarker([lat, lon], {
+                            radius: Math.max(5, temp / 5),
+                            color: color,
+                            fillColor: color,
+                            fillOpacity: 0.7
+                        }).bindPopup(
+                            `City: ${location.city}<br>
+                             Country: ${location.country}<br>
+                             Temperature: ${temp}°C`
+                        ).addTo(map);
+                    });
+                })
+                .catch(error => console.error("Error fetching data:", error));
+        }
+
+        function getColor(temp) {
+            return temp > 30 ? 'red' :
+                   temp > 20 ? 'orange' :
+                   temp > 10 ? 'yellow' :
+                   temp > 0  ? 'lightgreen' :
+                               'blue';
+        }
+
+        var yearSelector = document.getElementById('year-selector');
+        var dropdownLabel = document.getElementById('dropdown-label');
+
+        fetchData(1900);
+
+        for (var i = 1900; i <= 2100; i++) {
+            var option = document.createElement('option');
+            option.value = i;
+            option.innerText = i;
+            yearSelector.appendChild(option);
+        }
+
+        yearSelector.addEventListener('change', function () {
+            var selectedYear = yearSelector.value;
+
+            dropdownLabel.innerText = `Selected Year: ${selectedYear}`;
+
+            map.eachLayer(layer => {
+                if (layer instanceof L.CircleMarker) {
+                    map.removeLayer(layer);
+                }
+            });
+
+            fetchData(selectedYear);
+        });
+    </script>
+</body>
+</html>
