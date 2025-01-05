@@ -3,7 +3,7 @@ import pandas as pd
 
 app = Flask(__name__)
 
-data = pd.read_csv('temp_till_2100.csv')
+data = pd.read_csv('final_temp_2050.csv')
 
 @app.route('/')
 def index():
