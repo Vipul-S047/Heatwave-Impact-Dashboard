@@ -27,6 +27,13 @@
             border-radius: 15px;
             border: 3px dashed #f2efe9; 
         }
+        #india-map {
+            width: 60%;
+            height: 800px;
+            margin: 20px auto;
+            border-radius: 15px;
+            border: 3px dashed #f2efe9;
+        }
 
         .dropdown-box {
             width: 300px;
@@ -58,6 +65,63 @@
             border-color: #007bff;
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
         }
+        .visualisation-section {
+            margin-top: 50px;
+        }
+
+        .visualisation-section h2 {
+            color: #333;
+        }
+
+        .image-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column; 
+            gap: 20px; 
+            align-items: center; 
+        }
+
+        .image-wrapper {
+            position: relative;
+        }
+
+        .image-row {
+            display: flex; 
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .image-container img {
+            border-radius: 15px;
+            max-width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border: 2px solid #ddd;
+            transition: transform 0.3s ease;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.1); 
+        }
+
+        .hover-text {
+            display: none; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 14px;
+            width: 90%; 
+        }
+
+        .image-wrapper:hover .hover-text {
+            display: block; 
+        }
     </style>
 </head>
 <body>
@@ -65,18 +129,88 @@
     
     <div class="dropdown-box">
         <p id="dropdown-label">Click Below to Change Year</p>
-        <select id="year-selector">
-        </select>
+        <select id="year-selector"></select>
     </div>
 
     <div id="map"></div>
 
-    <script>
-        var map = L.map('map').setView([20, 0], 3);
+    <br><u><h2>Heatwave Susceptabilty Score of States of India</h2></u>
 
+    <div id="india-map"></div>
+
+    <div class="visualisation-section">
+        <h2><u>Visualisations</u></h2>
+        <div class="image-container">
+            <div class="image-row">
+                <div class="image-wrapper">
+                    <img src="static/images/Temperature.png" alt="Plot 1">
+                    <div class="hover-text">A region with high temperature variations is likely to experience more extreme heat events. Such areas may have larger differences between day and night temperatures, leading to greater discomfort and higher heat-related risks. The variability of temperatures can increase the intensity of heatwaves, leading to health impacts like heat exhaustion or heatstroke.</div>
+                </div>
+                <div class="image-wrapper">
+                    <img src="static/images/Carbon_emission.png" alt="Plot 2">
+                    <div class="hover-text">Higher carbon emissions contribute to climate change, leading to more extreme heat events, temperature fluctuations, and increased intensity of heatwaves. Carbon emissions from industrial activities, vehicles, and energy production contribute to global warming, which in turn intensifies heat stress on communities.</div>
+                </div>
+                <div class="image-wrapper">
+                    <img src="static/images/Air_quality.png" alt="Plot 3">
+                    <div class="hover-text">Air pollution can exacerbate heat-related health risks. During heatwaves, poor air quality worsens respiratory issues, increases the risk of cardiovascular diseases, and can lead to premature deaths. Additionally, the combination of air pollution and high temperatures can cause heat stress, especially in vulnerable populations.</div>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image-wrapper">
+                    <img src="static/images/Rainfall.png" alt="Plot 4">
+                    <div class="hover-text">Regions with low rainfall are often more prone to extreme heat due to a lack of sufficient water resources for cooling. Water scarcity can heighten the effects of heatwaves, affecting human health, agriculture, and the environment. In areas with limited rainfall, the ability to cope with heat extremes becomes significantly harder.</div>
+                </div>
+                <div class="image-wrapper">
+                    <img src="static/images/Groundwater.png" alt="Plot 5">
+                    <div class="hover-text">Poor groundwater sustainability can worsen the effects of heatwaves by limiting water availability during droughts. In regions where groundwater levels are low or unsustainable, water scarcity becomes a critical issue, exacerbating the impacts of heatwaves on both people and agriculture.</div>
+                </div>
+                <div class="image-wrapper">
+                    <img src="static/images/Health.png" alt="Plot 6">
+                    <div class="hover-text">A strong healthcare system helps mitigate the impact of heatwaves by providing essential medical care, improving preparedness, and supporting vulnerable populations such as the elderly and those with pre-existing health conditions. Regions with better healthcare access can reduce mortality and morbidity during extreme heat events.</div>
+                </div>
+            </div>
+            <div class="image-row">
+                <div class="image-wrapper">
+                    <img src="static/images/Population.png" alt="Plot 7">
+                    <div class="hover-text">High population density increases heat exposure and strain on resources during heatwaves. More people in a small area means higher urban heat islands, reduced airflow, and limited green spaces for cooling. As a result, densely populated regions are more vulnerable to extreme heat effects due to overcrowded conditions and resource limitations.</div>
+                </div>
+                <div class="image-wrapper">
+                    <img src="static/images/Heatwave.png" alt="Plot 8">
+                    <div class="hover-text">The Heatwave Susceptibility Score (HSS) is a composite index that evaluates a region's vulnerability to extreme heat events. It is calculated using multiple environmental, demographic, and infrastructural factors that influence the severity of heatwaves and their impact on communities.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var map = L.map('map', {
+            zoomControl: false,          
+            scrollWheelZoom: false,      
+            dragging: false
+        }).setView([20, 0], 3);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
+
+        var indiaBounds = L.latLngBounds(
+            L.latLng(6.4621, 68.1118), 
+            L.latLng(37.0902, 97.4026)  
+        );
+
+        var indiaMap = L.map('india-map', {
+            center: [20.5937, 78.9629], 
+            zoom: 5,
+            minZoom: 5,    
+            maxZoom: 5,
+            maxBounds: indiaBounds, 
+            maxBoundsViscosity: 1.0,
+            zoomControl: false,          
+            scrollWheelZoom: false,      
+            dragging: false
+        });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(indiaMap);
 
         function convertToFloat(coord) {
             let value = parseFloat(coord);
@@ -109,6 +243,47 @@
                     });
                 })
                 .catch(error => console.error("Error fetching data:", error));
+        }
+
+        function fetchIndiaData() {
+            fetch('/get_india_data')
+                .then(response => response.json())
+                .then(states => {
+
+                    states.forEach(state => {
+                        var lat = convertToFloat(state.lat);
+                        var lon = convertToFloat(state.lon);
+                        var category = state.category;
+                        var airPollution = state.air_pollution;
+                        var carbonEmissions = state.carbon_emissions;
+                        var healthcare = state.healthcare;
+                        var groundwater = state.groundwater;
+                        var population = state.population;
+                        var rainfall = state.rainfall;
+                        var temperature = state.temperature;
+                        var heatwave = state.heatwave;
+
+                        L.circleMarker([lat, lon], {
+                            radius: 10,
+                            color: 'orange',
+                            fillColor: 'red',
+                            fillOpacity: 0.8
+                        }).addTo(indiaMap)
+                            .bindPopup(
+                                `<strong>${state.state}</strong><br>
+                                Category: ${category}<br>
+                                <strong>Heatwave Susceptibility Score: ${heatwave}</strong><br>
+                                Air Pollution Index: ${airPollution}<br>
+                                Carbon Emission Impact: ${carbonEmissions}<br>
+                                Wellness and Healthcare Index: ${healthcare}<br>
+                                Groundwater Sustainability Score: ${groundwater}<br>
+                                Population Density Index: ${population}<br>
+                                Rainfall Sufficiency Index: ${rainfall}<br>
+                                Temperature Variation Score: ${temperature}`
+                            );
+                    });
+                })
+                .catch(error => console.error("Error fetching India data:", error));
         }
 
         function getColor(temp) {
@@ -144,6 +319,8 @@
 
             fetchData(selectedYear);
         });
+
+        fetchIndiaData();
     </script>
 </body>
 </html>
