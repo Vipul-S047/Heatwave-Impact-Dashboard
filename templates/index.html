@@ -13,6 +13,11 @@
             margin: 0;
             padding: 0;
             text-align: center;
+            background-image: url('static/images/bg.png');
+            background-attachment: fixed;
+            background-position: center; 
+            background-repeat: no-repeat; 
+            background-size: cover; 
         }
 
         h1 {
@@ -122,6 +127,83 @@
         .image-wrapper:hover .hover-text {
             display: block; 
         }
+
+        .chatbot-container {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 600px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px auto;
+            position: relative;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        input:focus, textarea:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 12px;
+            width: 100%;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .output-box {
+            margin-top: 15px;
+            resize: none;
+            height: 80px;
+            background-color: #f8f9fa;
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 25px;
+            height: 25px;
+            border: 4px solid #007BFF;
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 15px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -134,12 +216,12 @@
 
     <div id="map"></div>
 
-    <br><u><h2>Heatwave Susceptabilty Score of States of India</h2></u>
+    <br><u><h1>Heatwave Susceptabilty Score of States of India</h1></u>
 
     <div id="india-map"></div>
 
     <div class="visualisation-section">
-        <h2><u>Visualisations</u></h2>
+        <h1><u>Visualisations</u></h1>
         <div class="image-container">
             <div class="image-row">
                 <div class="image-wrapper">
@@ -182,6 +264,16 @@
         </div>
     </div>
 
+    <br><br><h1><u>Conversational Model to assist at times of Heatwaves</u></h1>
+    <div class="chatbot-container">
+        <label for="userPrompt">Enter User Prompt</label>
+        <input type="text" id="userPrompt" placeholder="Enter User Prompt">
+        <button id="submitPromptButton">Submit Prompt</button>
+        <br><span id="submitLoading" class="loading-spinner" style="display: none;"></span><br>
+        <label for="backendResponse">Response</label>
+        <textarea id="backendResponse" class="output-box" placeholder="Backend response will appear here..." readonly></textarea>
+    </div>
+    
     <script>
         var map = L.map('map', {
             zoomControl: false,          
@@ -321,6 +413,43 @@
         });
 
         fetchIndiaData();
+
+        document.getElementById('submitPromptButton').addEventListener('click', async () => {
+            const userPrompt = document.getElementById('userPrompt').value;
+            const loadingSpinner = document.getElementById('submitLoading');
+
+            if (!userPrompt) {
+                alert("Please enter a user prompt.");
+                return;
+            }
+
+            loadingSpinner.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({userPrompt })
+                });
+
+                const data = await response.json();
+                const backendResponse = document.getElementById('backendResponse');
+
+                if (response.ok) {
+                    backendResponse.value = data.response || "No response.";
+                } else {
+                    backendResponse.value = "Error: " + (data.error || "Failed to get response.");
+                }
+
+                backendResponse.style.height = "auto"; 
+                backendResponse.style.height = backendResponse.scrollHeight + "px";
+
+            } catch (error) {
+                console.error(error);
+            } finally {
+                loadingSpinner.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>

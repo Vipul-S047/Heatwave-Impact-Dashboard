@@ -1,5 +1,8 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template, jsonify,  request
 import pandas as pd
+from send_to_groq import send_to_groq
+
+GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
 app = Flask(__name__)
 
@@ -48,6 +51,18 @@ def get_india_data():
     except Exception as e:
         print(f"Error in /get_india_data: {e}")
         return jsonify({"error": "Data processing failed"}), 500
+
+@app.route('/submit', methods=['POST'])
+def submit_prompt():
+    try:
+        data = request.get_json()
+        user_prompt = data.get('userPrompt', '')
+
+        groq_response = send_to_groq(user_prompt, GROQ_API_URL)
+
+        return jsonify({"response": groq_response})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == '__main__':
