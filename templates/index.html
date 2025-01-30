@@ -6,450 +6,180 @@
     <title>Temperature Map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #aad3df; 
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            background-image: url('static/images/bg.png');
-            background-attachment: fixed;
-            background-position: center; 
-            background-repeat: no-repeat; 
-            background-size: cover; 
-        }
-
-        h1 {
-            margin-top: 20px;
-            color: #333;
-        }
-
-        #map {
-            width: 90%;
-            height: 600px;
-            margin: 20px auto;
-            border-radius: 15px;
-            border: 3px dashed #f2efe9; 
-        }
-        #india-map {
-            width: 60%;
-            height: 800px;
-            margin: 20px auto;
-            border-radius: 15px;
-            border: 3px dashed #f2efe9;
-        }
-
-        .dropdown-box {
-            width: 300px;
-            background-color: white;
-            margin: 20px auto;
-            padding: 15px;
-            border-radius: 15px; 
-            border: 1px solid #ddd;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-        }
-
-        select {
-            margin: 10px;
-            padding: 8px 12px;
-            font-size: 16px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: #fff;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
-            cursor: pointer;
-        }
-
-        select:hover {
-            border-color: #007bff;
-        }
-
-        select:focus {
-            outline: none;
-            border-color: #007bff;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-        }
-        .visualisation-section {
-            margin-top: 50px;
-        }
-
-        .visualisation-section h2 {
-            color: #333;
-        }
-
-        .image-container {
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column; 
-            gap: 20px; 
-            align-items: center; 
-        }
-
-        .image-wrapper {
-            position: relative;
-        }
-
-        .image-row {
-            display: flex; 
-            justify-content: center;
-            gap: 20px;
-        }
-
-        .image-container img {
-            border-radius: 15px;
-            max-width: 100%;
-            height: 300px;
-            object-fit: cover;
-            border: 2px solid #ddd;
-            transition: transform 0.3s ease;
-        }
-
-        .image-container img:hover {
-            transform: scale(1.1); 
-        }
-
-        .hover-text {
-            display: none; 
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            font-size: 14px;
-            width: 90%; 
-        }
-
-        .image-wrapper:hover .hover-text {
-            display: block; 
-        }
-
-        .chatbot-container {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            width: 600px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 20px auto;
-            position: relative;
-        }
-
-        label {
-            font-weight: bold;
-            display: block;
-            margin: 10px 0 5px;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: 0.3s;
-            outline: none;
-        }
-
-        input:focus, textarea:focus {
-            border-color: #007BFF;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
-        }
-
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 12px;
-            width: 100%;
-            font-size: 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-            transition: 0.3s;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .output-box {
-            margin-top: 15px;
-            resize: none;
-            height: 80px;
-            background-color: #f8f9fa;
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 25px;
-            height: 25px;
-            border: 4px solid #007BFF;
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 15px;
-            vertical-align: middle;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1><u>Global Temperature Visualization</u></h1><br>
-    
-    <div class="dropdown-box">
-        <p id="dropdown-label">Click Below to Change Year</p>
-        <select id="year-selector"></select>
+
+    <div class="sidebar">
+        <h2>Navigation</h2>
+        <a href="#" onclick="showPage('about')">About</a>
+        <a href="#" onclick="showPage('global-temperature')">Global Temperature</a>
+        <a href="#" onclick="showPage('india-heatwave')">India's Heatwave Score</a>
+        <a href="#" onclick="showPage('visualizations')">Visualisations</a>
+        <a href="#" onclick="showPage('chatbot')">Chatbot</a>
     </div>
 
-    <div id="map"></div>
+    <div class="content">
 
-    <br><u><h1>Heatwave Susceptabilty Score of States of India</h1></u>
+        <div id="about" class="page" style="text-align: left; margin-left: 30px;">
+            <div style="text-align: center;">
+                <h1><u>About Heatwaves and Climate Impact</u></h1>
+            </div>
 
-    <div id="india-map"></div>
+            <section>
+                <h2>What is a Heatwave?</h2>
+                <p>A heatwave is a prolonged period of excessively hot weather, which may be accompanied by high humidity. These extreme temperatures are considered dangerous and can pose severe health risks. Heatwaves are characterized by temperatures significantly higher than the usual climate for a specific area. The duration of a heatwave can vary, but typically it lasts for several consecutive days.</p>
+            </section>
 
-    <div class="visualisation-section">
-        <h1><u>Visualisations</u></h1>
-        <div class="image-container">
-            <div class="image-row">
-                <div class="image-wrapper">
-                    <img src="static/images/Temperature.png" alt="Plot 1">
-                    <div class="hover-text">A region with high temperature variations is likely to experience more extreme heat events. Such areas may have larger differences between day and night temperatures, leading to greater discomfort and higher heat-related risks. The variability of temperatures can increase the intensity of heatwaves, leading to health impacts like heat exhaustion or heatstroke.</div>
-                </div>
-                <div class="image-wrapper">
-                    <img src="static/images/Carbon_emission.png" alt="Plot 2">
-                    <div class="hover-text">Higher carbon emissions contribute to climate change, leading to more extreme heat events, temperature fluctuations, and increased intensity of heatwaves. Carbon emissions from industrial activities, vehicles, and energy production contribute to global warming, which in turn intensifies heat stress on communities.</div>
-                </div>
-                <div class="image-wrapper">
-                    <img src="static/images/Air_quality.png" alt="Plot 3">
-                    <div class="hover-text">Air pollution can exacerbate heat-related health risks. During heatwaves, poor air quality worsens respiratory issues, increases the risk of cardiovascular diseases, and can lead to premature deaths. Additionally, the combination of air pollution and high temperatures can cause heat stress, especially in vulnerable populations.</div>
+            <section>
+                <h2>Impact of Heatwaves</h2>
+                <p>Heatwaves are becoming more frequent and intense due to the global climate crisis. They pose a variety of risks to both human health and the environment. Here are some key impacts:</p>
+                
+                <ul>
+                    <li><span class="highlight">Health Risks:</span></li>
+                    <ul>
+                        <li><strong>Heat Stress and Stroke:</strong> Extended exposure to high temperatures can lead to heat exhaustion, heat stroke, dehydration, and even death.</li>
+                        <li><strong>Respiratory and Cardiovascular Strain:</strong> The combination of heat and air pollution worsens respiratory issues like asthma and heart conditions, especially among vulnerable populations.</li>
+                        <li><strong>Vulnerable Groups:</strong> Elderly people, children, people with pre-existing medical conditions, and outdoor workers are particularly susceptible to heat-related illnesses.</li>
+                    </ul>
+
+                    <li><span class="highlight">Environmental Effects:</span></li>
+                    <ul>
+                        <li><strong>Droughts and Water Shortages:</strong> Heatwaves often lead to reduced rainfall, causing droughts and significant water scarcity, which negatively impacts agriculture and local ecosystems.</li>
+                        <li><strong>Wildfires:</strong> High temperatures can ignite wildfires, leading to massive environmental destruction and loss of life.</li>
+                        <li><strong>Agricultural Loss:</strong> Crops suffer from high temperatures, resulting in lower agricultural yields and higher food prices.</li>
+                    </ul>
+
+                    <li><span class="highlight">Economic Consequences:</span></li>
+                    <ul>
+                        <li><strong>Energy Demands:</strong> The demand for air conditioning and cooling systems increases dramatically, which may strain energy supplies and increase electricity costs.</li>
+                        <li><strong>Healthcare System Burden:</strong> Hospitals and healthcare systems face increased demand during heatwaves, dealing with a surge in patients with heat-related illnesses.</li>
+                    </ul>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Factors Contributing to Increased Heatwave Frequency</h2>
+                <ul>
+                    <li><strong>Global Warming:</strong> Human-induced climate change, primarily caused by carbon emissions from industries, deforestation, and transportation, is leading to rising global temperatures. As the planet heats up, so does the frequency of heatwaves.</li>
+                    <li><strong>Urban Heat Islands:</strong> Cities tend to trap more heat due to their dense infrastructure and concrete surfaces. These areas often experience much higher temperatures than surrounding rural areas.</li>
+                    <li><strong>Climate Change:</strong> Climate models predict that many regions will experience more frequent and intense heatwaves due to rising greenhouse gas concentrations in the atmosphere.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>How to Mitigate Heatwave Risks?</h2>
+                <ul>
+                    <li><strong>Early Warning Systems:</strong> Implementing heatwave early warning systems can help communities prepare in advance by providing alerts about extreme temperature events.</li>
+                    <li><strong>Cooling Centers:</strong> Establishing community cooling centers can provide refuge for vulnerable populations during heatwaves.</li>
+                    <li><strong>Green Spaces:</strong> Urban greening projects like planting trees, creating parks, and building green rooftops can help cool cities and reduce the urban heat island effect.</li>
+                    <li><strong>Public Awareness:</strong> Educating the public about the risks of heatwaves and how to stay hydrated, cool, and safe during extreme temperatures is crucial for reducing health impacts.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2>Heatwave Susceptibility Score (HSS)</h2>
+                <p>In this visualization tool, we present the <span class="highlight">Heatwave Susceptibility Score (HSS)</span> for different regions and states. This score evaluates a region’s vulnerability to heatwaves based on factors such as:</p>
+                <ul>
+                    <li>Temperature variability</li>
+                    <li>Air pollution levels</li>
+                    <li>Groundwater sustainability</li>
+                    <li>Population density</li>
+                    <li>Healthcare system accessibility</li>
+                </ul>
+                <p>Higher scores indicate regions that are more at risk for extreme heat events. This information helps local governments and communities better prepare and mitigate the potential impacts of heatwaves.</p>
+            </section>
+
+            <section>
+                <h2>What Can You Do?</h2>
+                <ul>
+                    <li><strong>Stay Hydrated:</strong> Drink plenty of water to stay hydrated.</li>
+                    <li><strong>Avoid Direct Sun Exposure:</strong> Stay indoors during the hottest parts of the day.</li>
+                    <li><strong>Use Air Conditioning or Fans:</strong> Use cooling methods to reduce your body temperature.</li>
+                    <li><strong>Check on Vulnerable Neighbors:</strong> Ensure elderly neighbors or those with health conditions are safe during heatwaves.</li>
+                    <li><strong>Advocate for Change:</strong> Support policies that address climate change, reduce emissions, and invest in urban cooling measures.</li>
+                </ul>
+                <p>By understanding the risks and taking proactive measures, we can mitigate the effects of heatwaves and better prepare for the challenges ahead.</p>
+            </section>
+        </div>
+
+        <div id="global-temperature" class="page">
+            <h1><u>Global Temperature Visualization</u></h1><br>
+            
+            <div class="dropdown-box">
+                <p id="dropdown-label">Click Below to Change Year</p>
+                <select id="year-selector"></select>
+            </div>
+
+            <div id="map"></div>
+        </div>
+
+        <div class="page" id="india-heatwave">
+            <br><u><h1>Heatwave Susceptabilty Score of States of India</h1></u>
+
+            <div id="india-map"></div>
+        </div>
+
+        <div  class="page" id="visualizations">
+            <div class="visualisation-section">
+                <h1><u>Visualisations</u></h1>
+                <div class="image-container">
+                    <div class="image-row">
+                        <div class="image-wrapper">
+                            <img src="static/images/Temperature.png" alt="Plot 1">
+                            <div class="hover-text">A region with high temperature variations is likely to experience more extreme heat events. Such areas may have larger differences between day and night temperatures, leading to greater discomfort and higher heat-related risks. The variability of temperatures can increase the intensity of heatwaves, leading to health impacts like heat exhaustion or heatstroke.</div>
+                        </div>
+                        <div class="image-wrapper">
+                            <img src="static/images/Carbon_emission.png" alt="Plot 2">
+                            <div class="hover-text">Higher carbon emissions contribute to climate change, leading to more extreme heat events, temperature fluctuations, and increased intensity of heatwaves. Carbon emissions from industrial activities, vehicles, and energy production contribute to global warming, which in turn intensifies heat stress on communities.</div>
+                        </div>
+                        <div class="image-wrapper">
+                            <img src="static/images/Air_quality.png" alt="Plot 3">
+                            <div class="hover-text">Air pollution can exacerbate heat-related health risks. During heatwaves, poor air quality worsens respiratory issues, increases the risk of cardiovascular diseases, and can lead to premature deaths. Additionally, the combination of air pollution and high temperatures can cause heat stress, especially in vulnerable populations.</div>
+                        </div>
+                    </div>
+                    <div class="image-row">
+                        <div class="image-wrapper">
+                            <img src="static/images/Rainfall.png" alt="Plot 4">
+                            <div class="hover-text">Regions with low rainfall are often more prone to extreme heat due to a lack of sufficient water resources for cooling. Water scarcity can heighten the effects of heatwaves, affecting human health, agriculture, and the environment. In areas with limited rainfall, the ability to cope with heat extremes becomes significantly harder.</div>
+                        </div>
+                        <div class="image-wrapper">
+                            <img src="static/images/Groundwater.png" alt="Plot 5">
+                            <div class="hover-text">Poor groundwater sustainability can worsen the effects of heatwaves by limiting water availability during droughts. In regions where groundwater levels are low or unsustainable, water scarcity becomes a critical issue, exacerbating the impacts of heatwaves on both people and agriculture.</div>
+                        </div>
+                        <div class="image-wrapper">
+                            <img src="static/images/Health.png" alt="Plot 6">
+                            <div class="hover-text">A strong healthcare system helps mitigate the impact of heatwaves by providing essential medical care, improving preparedness, and supporting vulnerable populations such as the elderly and those with pre-existing health conditions. Regions with better healthcare access can reduce mortality and morbidity during extreme heat events.</div>
+                        </div>
+                    </div>
+                    <div class="image-row">
+                        <div class="image-wrapper">
+                            <img src="static/images/Population.png" alt="Plot 7">
+                            <div class="hover-text">High population density increases heat exposure and strain on resources during heatwaves. More people in a small area means higher urban heat islands, reduced airflow, and limited green spaces for cooling. As a result, densely populated regions are more vulnerable to extreme heat effects due to overcrowded conditions and resource limitations.</div>
+                        </div>
+                        <div class="image-wrapper">
+                            <img src="static/images/Heatwave.png" alt="Plot 8">
+                            <div class="hover-text">The Heatwave Susceptibility Score (HSS) is a composite index that evaluates a region's vulnerability to extreme heat events. It is calculated using multiple environmental, demographic, and infrastructural factors that influence the severity of heatwaves and their impact on communities.</div>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="image-row">
-                <div class="image-wrapper">
-                    <img src="static/images/Rainfall.png" alt="Plot 4">
-                    <div class="hover-text">Regions with low rainfall are often more prone to extreme heat due to a lack of sufficient water resources for cooling. Water scarcity can heighten the effects of heatwaves, affecting human health, agriculture, and the environment. In areas with limited rainfall, the ability to cope with heat extremes becomes significantly harder.</div>
-                </div>
-                <div class="image-wrapper">
-                    <img src="static/images/Groundwater.png" alt="Plot 5">
-                    <div class="hover-text">Poor groundwater sustainability can worsen the effects of heatwaves by limiting water availability during droughts. In regions where groundwater levels are low or unsustainable, water scarcity becomes a critical issue, exacerbating the impacts of heatwaves on both people and agriculture.</div>
-                </div>
-                <div class="image-wrapper">
-                    <img src="static/images/Health.png" alt="Plot 6">
-                    <div class="hover-text">A strong healthcare system helps mitigate the impact of heatwaves by providing essential medical care, improving preparedness, and supporting vulnerable populations such as the elderly and those with pre-existing health conditions. Regions with better healthcare access can reduce mortality and morbidity during extreme heat events.</div>
-                </div>
-            </div>
-            <div class="image-row">
-                <div class="image-wrapper">
-                    <img src="static/images/Population.png" alt="Plot 7">
-                    <div class="hover-text">High population density increases heat exposure and strain on resources during heatwaves. More people in a small area means higher urban heat islands, reduced airflow, and limited green spaces for cooling. As a result, densely populated regions are more vulnerable to extreme heat effects due to overcrowded conditions and resource limitations.</div>
-                </div>
-                <div class="image-wrapper">
-                    <img src="static/images/Heatwave.png" alt="Plot 8">
-                    <div class="hover-text">The Heatwave Susceptibility Score (HSS) is a composite index that evaluates a region's vulnerability to extreme heat events. It is calculated using multiple environmental, demographic, and infrastructural factors that influence the severity of heatwaves and their impact on communities.</div>
-                </div>
+        </div>
+
+        <div id="chatbot" class="page">
+            <br><br><h1><u>Conversational Model to assist at times of Heatwaves</u></h1>
+            <div class="chatbot-container">
+                <label for="userPrompt">Enter User Prompt</label>
+                <input type="text" id="userPrompt" placeholder="Enter User Prompt">
+                <button id="submitPromptButton">Submit Prompt</button>
+                <br><span id="submitLoading" class="loading-spinner" style="display: none;"></span><br>
+                <label for="backendResponse">Response</label>
+                <textarea id="backendResponse" class="output-box" placeholder="Backend response will appear here..." readonly></textarea>
             </div>
         </div>
     </div>
 
-    <br><br><h1><u>Conversational Model to assist at times of Heatwaves</u></h1>
-    <div class="chatbot-container">
-        <label for="userPrompt">Enter User Prompt</label>
-        <input type="text" id="userPrompt" placeholder="Enter User Prompt">
-        <button id="submitPromptButton">Submit Prompt</button>
-        <br><span id="submitLoading" class="loading-spinner" style="display: none;"></span><br>
-        <label for="backendResponse">Response</label>
-        <textarea id="backendResponse" class="output-box" placeholder="Backend response will appear here..." readonly></textarea>
-    </div>
-    
-    <script>
-        var map = L.map('map', {
-            zoomControl: false,          
-            scrollWheelZoom: false,      
-            dragging: false
-        }).setView([20, 0], 3);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
-        var indiaBounds = L.latLngBounds(
-            L.latLng(6.4621, 68.1118), 
-            L.latLng(37.0902, 97.4026)  
-        );
-
-        var indiaMap = L.map('india-map', {
-            center: [20.5937, 78.9629], 
-            zoom: 5,
-            minZoom: 5,    
-            maxZoom: 5,
-            maxBounds: indiaBounds, 
-            maxBoundsViscosity: 1.0,
-            zoomControl: false,          
-            scrollWheelZoom: false,      
-            dragging: false
-        });
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(indiaMap);
-
-        function convertToFloat(coord) {
-            let value = parseFloat(coord);
-            if (coord.includes('S') || coord.includes('W')) {
-                value = -value;
-            }
-            return value;
-        }
-
-        function fetchData(year) {
-            fetch(`/get_data/${year}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(location => {
-                        var temp = parseFloat(location.temp);
-                        var color = getColor(temp);
-                        var lat = convertToFloat(location.lat);
-                        var lon = convertToFloat(location.lon);
-
-                        L.circleMarker([lat, lon], {
-                            radius: Math.max(5, temp / 5),
-                            color: color,
-                            fillColor: color,
-                            fillOpacity: 0.7
-                        }).bindPopup(
-                            `City: ${location.city}<br>
-                             Country: ${location.country}<br>
-                             Temperature: ${temp}°C`
-                        ).addTo(map);
-                    });
-                })
-                .catch(error => console.error("Error fetching data:", error));
-        }
-
-        function fetchIndiaData() {
-            fetch('/get_india_data')
-                .then(response => response.json())
-                .then(states => {
-
-                    states.forEach(state => {
-                        var lat = convertToFloat(state.lat);
-                        var lon = convertToFloat(state.lon);
-                        var category = state.category;
-                        var airPollution = state.air_pollution;
-                        var carbonEmissions = state.carbon_emissions;
-                        var healthcare = state.healthcare;
-                        var groundwater = state.groundwater;
-                        var population = state.population;
-                        var rainfall = state.rainfall;
-                        var temperature = state.temperature;
-                        var heatwave = state.heatwave;
-
-                        L.circleMarker([lat, lon], {
-                            radius: 10,
-                            color: 'orange',
-                            fillColor: 'red',
-                            fillOpacity: 0.8
-                        }).addTo(indiaMap)
-                            .bindPopup(
-                                `<strong>${state.state}</strong><br>
-                                Category: ${category}<br>
-                                <strong>Heatwave Susceptibility Score: ${heatwave}</strong><br>
-                                Air Pollution Index: ${airPollution}<br>
-                                Carbon Emission Impact: ${carbonEmissions}<br>
-                                Wellness and Healthcare Index: ${healthcare}<br>
-                                Groundwater Sustainability Score: ${groundwater}<br>
-                                Population Density Index: ${population}<br>
-                                Rainfall Sufficiency Index: ${rainfall}<br>
-                                Temperature Variation Score: ${temperature}`
-                            );
-                    });
-                })
-                .catch(error => console.error("Error fetching India data:", error));
-        }
-
-        function getColor(temp) {
-            return temp > 30 ? 'red' :
-                   temp > 20 ? 'orange' :
-                   temp > 10 ? 'yellow' :
-                   temp > 0  ? 'lightgreen' :
-                               'blue';
-        }
-
-        var yearSelector = document.getElementById('year-selector');
-        var dropdownLabel = document.getElementById('dropdown-label');
-
-        fetchData(1900);
-
-        for (var i = 1850; i <= 2049; i++) {
-            var option = document.createElement('option');
-            option.value = i;
-            option.innerText = i;
-            yearSelector.appendChild(option);
-        }
-
-        yearSelector.addEventListener('change', function () {
-            var selectedYear = yearSelector.value;
-
-            dropdownLabel.innerText = `Selected Year: ${selectedYear}`;
-
-            map.eachLayer(layer => {
-                if (layer instanceof L.CircleMarker) {
-                    map.removeLayer(layer);
-                }
-            });
-
-            fetchData(selectedYear);
-        });
-
-        fetchIndiaData();
-
-        document.getElementById('submitPromptButton').addEventListener('click', async () => {
-            const userPrompt = document.getElementById('userPrompt').value;
-            const loadingSpinner = document.getElementById('submitLoading');
-
-            if (!userPrompt) {
-                alert("Please enter a user prompt.");
-                return;
-            }
-
-            loadingSpinner.style.display = 'inline-block';
-
-            try {
-                const response = await fetch('/submit', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({userPrompt })
-                });
-
-                const data = await response.json();
-                const backendResponse = document.getElementById('backendResponse');
-
-                if (response.ok) {
-                    backendResponse.value = data.response || "No response.";
-                } else {
-                    backendResponse.value = "Error: " + (data.error || "Failed to get response.");
-                }
-
-                backendResponse.style.height = "auto"; 
-                backendResponse.style.height = backendResponse.scrollHeight + "px";
-
-            } catch (error) {
-                console.error(error);
-            } finally {
-                loadingSpinner.style.display = 'none';
-            }
-        });
-    </script>
 </body>
 </html>
