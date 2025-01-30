@@ -71,3 +71,5 @@ By understanding the risks and taking proactive measures, we can mitigate the ef
 - ```pip install -r requirements.txt```
 ### 3. Run the Flask Server
 ```python app.py```
+
+# NOTE: For the working of the web application, please look into [AppWorking.md](https://github.com/Skanda-P-R/Heatwave-Impact-Dashboard/blob/main/AppWorking.md) file.
