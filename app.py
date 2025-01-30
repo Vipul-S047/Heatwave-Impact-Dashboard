@@ -38,7 +38,7 @@ def get_india_data():
             india_states.append({
                 'state': row['State'],
                 'lat': row['lat'],  
-                'lon': row['lon'],  
+                'lon': row['lon'],
                 'category': row['Category'],
                 'air_pollution': row['Air Pollution Index'],
                 'carbon_emissions': row['Carbon Emission Impact Score'],
