@@ -42,6 +42,17 @@ In this visualization tool, we present the **Heatwave Susceptibility Score (HSS)
 
 Higher scores indicate regions that are more at risk for extreme heat events. This information helps local governments and communities better prepare and mitigate the potential impacts of heatwaves.
 
+## Importance of the Heatwave Susceptibility Score (HSS) to Society
+
+- **Public Health Protection:** The project helps safeguard vulnerable populations by providing early warnings of heat-related health risks.
+- **Early Warning and Crisis Management:** It equips local authorities with the tools to prepare and respond effectively to heatwave events.
+- **Resource Allocation and Planning:** The project enables better allocation of resources and targeted interventions in high-risk areas.
+- **Raising Climate Awareness:** It raises awareness about the increasing frequency of heatwaves due to climate change, urging action.
+- **Supporting Vulnerable Populations:** The project identifies areas where vulnerable groups need support, ensuring they stay safe during extreme heat.
+- **Sustainability and Long-Term Resilience:** It promotes climate-resilient urban infrastructure and sustainable practices to cope with future heatwaves.
+- **Economic Benefits:** The project reduces the economic impact of heatwaves by lowering healthcare costs and preventing disruptions.
+
+
 ## What Can You Do?
 - **Stay Hydrated:** Drink plenty of water to stay hydrated.
 - **Avoid Direct Sun Exposure:** Stay indoors during the hottest parts of the day.
