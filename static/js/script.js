@@ -185,3 +185,63 @@ document.getElementById('submitPromptButton').addEventListener('click', async ()
         loadingSpinner.style.display = 'none';
     }
 });
+
+document.getElementById('submitButton').addEventListener('click', async () => {
+    const API = document.getElementById('API').value;
+    const CEIS = document.getElementById('CEIS').value;
+    const WHI = document.getElementById('WHI').value;
+    const GSS = document.getElementById('GSS').value;
+    const PDI = document.getElementById('PDI').value;
+    const RSI = document.getElementById('RSI').value;
+    const TVS = document.getElementById('TVS').value;
+
+    if (!API || !CEIS || !WHI || !GSS || !PDI || !RSI || !TVS) {
+        alert("All fields must be filled.");
+        return;
+    }
+    
+    if (API < 0 || API > 1 || CEIS < 0 || CEIS > 1 || WHI < 0 || WHI > 1 || GSS < 0 || GSS > 1 || PDI < 0 || PDI > 1 || RSI < 0 || RSI > 1 || TVS < 0 || TVS > 1) {
+        alert("Please enter values between 0 and 1.");
+        return;
+    }
+
+    try {
+        const response = await fetch('/predict', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({API,CEIS,WHI,GSS,PDI,RSI,TVS})
+        });
+
+        const data = await response.json();
+        const predictResponse = document.getElementById('predictResponse');
+
+        if (response.ok) {
+            const predictedHSS = data["Predicted HSS"];
+            const predictedCategory = data["Predicted Category"];
+            predictResponse.value = `Predicted HSS: ${predictedHSS}\nPredicted Category: ${predictedCategory}`;
+        } else {
+            predictResponse.value = "Error: " + (data.error || "Failed to get response.");
+        }
+
+        predictResponse.style.height = "auto"; 
+        predictResponse.style.height = predictResponse.scrollHeight + "px";
+
+    } catch (error) {
+        console.error(error);
+    }
+});
+
+document.getElementById('resetButton').addEventListener('click', function() {
+    document.getElementById('API').value = '';
+    document.getElementById('CEIS').value = '';
+    document.getElementById('WHI').value = '';
+    document.getElementById('GSS').value = '';
+    document.getElementById('PDI').value = '';
+    document.getElementById('RSI').value = '';
+    document.getElementById('TVS').value = '';
+
+    const predictResponse = document.getElementById('predictResponse');
+    predictResponse.value = '';
+
+    predictResponse.style.height = "auto"; 
+});

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Map</title>
+    <title>Heatwave Susceptabilty</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
@@ -15,6 +15,7 @@
         <a href="#" onclick="showPage('about')">About</a>
         <a href="#" onclick="showPage('global-temperature')">Global Temperature</a>
         <a href="#" onclick="showPage('india-heatwave')">India's Heatwave Score</a>
+        <a href="#" onclick="showPage('heatwave-pred')">Heatwave Score Prediction</a>
         <a href="#" onclick="showPage('visualizations')">Visualisations</a>
         <a href="#" onclick="showPage('chatbot')">Chatbot</a>
     </div>
@@ -118,6 +119,31 @@
             <br><u><h1>Heatwave Susceptabilty Score of States of India</h1></u>
 
             <div id="india-map"></div>
+        </div>
+
+        <div class="page" id="heatwave-pred">
+            <h1><u>Heatwave Susceptabilty Score Prediction</u></h1>
+            <div class="chatbot-container">
+                <label for="API">Enter Air Pollution Index</label>
+                <input type="text" id="API">
+                <label for="CEIS">Enter Carbon Emission Impact Score</label>
+                <input type="text" id="CEIS">
+                <label for="WHI">Enter Wellness and Healthcare Index</label>
+                <input type="text" id="WHI">
+                <label for="GSS">Enter Groundwater Sustainability Score</label>
+                <input type="text" id="GSS">
+                <label for="PDI">Enter Population Density Index</label>
+                <input type="text" id="PDI">
+                <label for="RSI">Enter Rainfall Sufficiency Index</label>
+                <input type="text" id="RSI">
+                <label for="TVS">Enter Temperature Variation Score</label>
+                <input type="text" id="TVS">
+                <button id="submitButton">Predict HSS</button>
+                <br>
+                <label for="predictResponse">Response</label>
+                <textarea id="predictResponse" class="output-box" placeholder="Prediction will appear here..." readonly></textarea>
+                <button id="resetButton">Reset</button>
+            </div>
         </div>
 
         <div  class="page" id="visualizations">

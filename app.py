@@ -1,6 +1,8 @@
 from flask import Flask, render_template, jsonify,  request
 import pandas as pd
+import numpy as np
 from send_to_groq import send_to_groq
+import joblib
 
 GROQ_API_URL = "https://api.groq.com/openai/v1/chat/completions"
 
@@ -64,6 +66,52 @@ def submit_prompt():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/predict', methods=['POST'])
+def predict():
+    try:
+        data = request.get_json()
+        API = data.get('API', '')
+        CEIS = data.get('CEIS', '')
+        WHI = data.get('WHI', '')
+        GSS = data.get('GSS', '')
+        PDI = data.get('PDI', '')
+        RSI = data.get('RSI', '')
+        TVS = data.get('TVS', '')
+
+        input_data = {
+            'Air Pollution Index': [API],
+            'Carbon Emission Impact Score': [CEIS],
+            'Wellness and Healthcare Index': [WHI],
+            'Groundwater Sustainability Score': [GSS],
+            'Population Density Index': [PDI],
+            'Rainfall Sufficiency Index': [RSI],
+            'Temperature Variation Score': [TVS]
+        }
+
+        input_df = pd.DataFrame(input_data)
+        model = joblib.load('ML_model.pkl')
+
+        predicted_hss = model.predict(input_df)
+        predicted_hss = np.clip(predicted_hss, 0, 1)
+
+        def classify_hss(score):
+            if 0.00 <= score <= 0.30:
+                return 'Low Susceptibility'
+            elif 0.31 <= score <= 0.50:
+                return 'Moderate Susceptibility'
+            elif 0.51 <= score <= 0.70:
+                return 'High Susceptibility'
+            elif 0.71 <= score <= 1.00:
+                return 'Very High Susceptibility'
+            else:
+                return 'Invalid Score'
+
+        predicted_category = classify_hss(predicted_hss[0])        
+
+        return jsonify({"Predicted HSS": predicted_hss[0],
+                        "Predicted Category": predicted_category})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
